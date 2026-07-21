@@ -40,7 +40,7 @@ public class AccountController {
 		return new ResponseEntity<Account>(acc,HttpStatus.FOUND);
 	}
 	
-	@PatchMapping("/status-update")
+	@PatchMapping("/update-status")
 	public ResponseEntity<String> updateAccStatus(@RequestHeader("X-Auth-User") String userId, 
 														@RequestBody AccountStausUpdateDTO accStatReqDTO){
 		String message = accService.updateAccStatus(userId,accStatReqDTO);

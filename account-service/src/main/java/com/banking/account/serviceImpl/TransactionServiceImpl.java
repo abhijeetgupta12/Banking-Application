@@ -38,17 +38,17 @@ public class TransactionServiceImpl implements TransactionService {
 		System.out.println("Balance to be transaferred - "+accountDetails.getBalance());
 		
 		Account acc = accountRepository.findById(accountDetails.getFrom_acc_no())
-				.orElseThrow(()->new ResourceNotFoundException(" Sender account_no does not exist!"));
+				.orElseThrow(()->new ResourceNotFoundException("ERROR: Sender account_no does not exist! \n"));
 		
 		System.out.println("Balance available - "+acc.getBalance());
 		
 			
 		if(!acc.getCust_id().equals(userId))
-			throw new ResourceNotFoundException("Account does not belong to logged in user!");
+			throw new ResourceNotFoundException("ERROR: Account does not belong to logged in user! \n");
 		else if(!acc.getStatus().equals("ACTIVE"))
-			throw new ResourceNotFoundException("Account is not ACTIVE!");
+			throw new ResourceNotFoundException("ERROR: Account is not ACTIVE! \n");
 		else if(acc.getBalance()<accountDetails.getBalance())
-			throw new ResourceNotFoundException("Insufficient Balance!!");
+			throw new ResourceNotFoundException("ERROR: Insufficient Balance!! \n");
 		
 		
 		
@@ -70,13 +70,13 @@ public class TransactionServiceImpl implements TransactionService {
 		System.out.println("Receiver's AccountNo - "+accountDetails.getTo_acc_no());
 		
 		Account acc = accountRepository.findById(accountDetails.getTo_acc_no())
-				.orElseThrow(()->new ResourceNotFoundException("Receiver's AccountNo does not exist!"));
+				.orElseThrow(()->new ResourceNotFoundException("ERROR: Receiver's AccountNo does not exist! \n"));
 		
 		System.out.println("Receiver's curr balance - "+acc.getBalance());
 		
 			
 		if(!acc.getStatus().equals("ACTIVE"))
-			throw new ResourceNotFoundException("Account is not ACTIVE!");
+			throw new ResourceNotFoundException("ERROR: Account is not ACTIVE! \n");
 		
 		Long curr_bal=acc.getBalance();
 		acc.setBalance(curr_bal+accountDetails.getBalance());
@@ -96,10 +96,10 @@ public class TransactionServiceImpl implements TransactionService {
 	public String checkBalance(String userId, Long accNo) {
 		// TODO Auto-generated method stub
 		Account acc = accountRepository.findById(accNo)
-				.orElseThrow(()-> new ResourceNotFoundException("Account does not exist!"));
+				.orElseThrow(()-> new ResourceNotFoundException("ERROR: Account does not exist! \n"));
 
 		if(!acc.getCust_id().equals(userId))
-			throw new ResourceNotFoundException("Account does not belong to the user logged in!");
+			throw new ResourceNotFoundException("ERROR: Account does not belong to the user logged in! \n");
 		
 		return acc.getBalance().toString();
 
