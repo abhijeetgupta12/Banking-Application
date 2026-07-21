@@ -2,6 +2,7 @@ package com.banking.account.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import com.banking.account.dtos.AccountAndBalanceDTO;
 import com.banking.account.entity.Account;
@@ -17,16 +18,29 @@ public class TransactionServiceImpl implements TransactionService {
 	@Autowired
 	AccountRepository accountRepository;
 
+
 	@Override
 	@Transactional
+	public String transferAmount(String userId, AccountAndBalanceDTO accountDetails) {
+		// TODO Auto-generated method stub
+		
+		String debitMessage = debitAccBalance(userId,accountDetails);
+		String creditMessage = creditAccBalance(accountDetails);
+		
+		return debitMessage+"\n"+creditMessage;
+		
+	}
+	
 	public String debitAccBalance(String userId, AccountAndBalanceDTO accountDetails) {
 		// TODO Auto-generated method stub
-		System.out.println(userId);
-		System.out.println(accountDetails.getAcc_no()+" "+accountDetails.getBalance());
+		System.out.println("Logged in user - "+userId);
+		System.out.println("Sender's AccountNo - "+accountDetails.getFrom_acc_no());
+		System.out.println("Balance to be transaferred - "+accountDetails.getBalance());
 		
-		Account acc = accountRepository.findById(accountDetails.getAcc_no())
-				.orElseThrow(()->new ResourceNotFoundException("Account no does not exist!"));
-		System.out.println(acc.getAcc_no());
+		Account acc = accountRepository.findById(accountDetails.getFrom_acc_no())
+				.orElseThrow(()->new ResourceNotFoundException(" Sender account_no does not exist!"));
+		
+		System.out.println("Balance available - "+acc.getBalance());
 		
 			
 		if(!acc.getCust_id().equals(userId))
@@ -42,20 +56,23 @@ public class TransactionServiceImpl implements TransactionService {
 		acc.setBalance(curr_bal-accountDetails.getBalance());
 		
 		accountRepository.save(acc);
-		
+		System.out.println("Balance deducted from sender's account");
 		//sendNotification();
 		
 		return "Amount of Rs."+accountDetails.getBalance()+
-									" deducted from account no "+acc.getAcc_no();
+									" deducted from account no "+accountDetails.getFrom_acc_no();
 	}
 
-	@Override
-	@Transactional
+
 	public String creditAccBalance(AccountAndBalanceDTO accountDetails) {
 		// TODO Auto-generated method stub
-		Account acc = accountRepository.findById(accountDetails.getAcc_no())
-				.orElseThrow(()->new ResourceNotFoundException("Account no does not exist!"));
-		System.out.println(acc.getAcc_no());
+		
+		System.out.println("Receiver's AccountNo - "+accountDetails.getTo_acc_no());
+		
+		Account acc = accountRepository.findById(accountDetails.getTo_acc_no())
+				.orElseThrow(()->new ResourceNotFoundException("Receiver's AccountNo does not exist!"));
+		
+		System.out.println("Receiver's curr balance - "+acc.getBalance());
 		
 			
 		if(!acc.getStatus().equals("ACTIVE"))
@@ -65,12 +82,15 @@ public class TransactionServiceImpl implements TransactionService {
 		acc.setBalance(curr_bal+accountDetails.getBalance());
 		
 		accountRepository.save(acc);
-		
+		System.out.println("Balance transfered to receiver's account");
 		//sendNotification();
 		
 		return "Amount of Rs."+accountDetails.getBalance()+
 									" credited to account no "+acc.getAcc_no();
 	}
+	
+	
+	
 
 	@Override
 	public String checkBalance(String userId, Long accNo) {
@@ -84,6 +104,8 @@ public class TransactionServiceImpl implements TransactionService {
 		return acc.getBalance().toString();
 
 	}
+
+	
 
 	
 }

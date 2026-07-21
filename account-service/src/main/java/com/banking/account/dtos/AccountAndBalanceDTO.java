@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AccountAndBalanceDTO {
 	
-	private Long acc_no;
+	private Long from_acc_no;
+	private Long to_acc_no;
 	private Long balance;
 }

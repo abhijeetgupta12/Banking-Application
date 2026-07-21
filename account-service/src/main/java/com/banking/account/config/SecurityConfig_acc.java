@@ -13,6 +13,7 @@ public class SecurityConfig_acc {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    	System.out.println("Account-Service Security Config File Loaded ... !!");
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session

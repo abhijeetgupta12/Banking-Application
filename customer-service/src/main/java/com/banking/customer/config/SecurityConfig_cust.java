@@ -39,6 +39,7 @@ public class SecurityConfig_cust {
             HttpSecurity http)
             throws Exception {
 
+    	System.out.println("Customer Security Config File Loaded ... !!");
         return http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->

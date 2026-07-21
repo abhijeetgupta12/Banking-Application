@@ -46,4 +46,14 @@ public class GatewayConfig {
                 .before(BeforeFilterFunctions.uri("http://localhost:9091"))
                 .build();
     }
+    
+    @Bean
+    public RouterFunction<ServerResponse> accountInternalServiceRoute() {
+        return GatewayRouterFunctions.route("account-service-internal")
+                .route(RequestPredicates.path("/account-internal/**"),
+                        HandlerFunctions.http())
+                .before(addAuthUserHeader())
+                .before(BeforeFilterFunctions.uri("http://localhost:9091"))
+                .build();
+    }
 }
